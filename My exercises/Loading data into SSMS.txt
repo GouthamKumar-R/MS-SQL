@@ -1,0 +1,12 @@
+Install the package:Access DB engine
+
+After creating DB, right click,--> Tasks-->Import data.
+!!!Dont click on import flat file directly, u'll have to adjust null values col, datatypes, everything
+
+post that Import datra dialog box,
+1)click-->next
+2)Data source --> Flat File source(frm drop down), incase csv, excel
+		----> browse the file frm pc, change the delimitor(optional)---click--> next
+3) destination ---->sql server native client---> select the db, where u wanna load--click-->next
+		----->Edit mappings(optional)--- click --->next
+Run immediately--->next---->FINISH
