@@ -144,3 +144,70 @@ country varchar(20);  ---multiple column addition
 create, alter, drop all commands discussed abv
 exercise create table, add values, and truncate it , add again, drop table*/
 
+--few classes on order by etc., 
+/* 08- sep 2020*/  --from here action are performed on Praxis_july
+
+use Praxis_july;
+
+select * from stud;
+
+select * from stud
+order by Age;
+
+select top(3)* from stud;  --top 3 records it can give any 3 records
+
+exec sp_help stud;
+
+--limit --limits only certain record for retrival of data
+-- select * from stud limit 3; --here it wont work
+
+--copy of table
+
+select * into stud_copy from stud;
+
+truncate table stud_copy;
+drop table stud_copy;
+GO
+
+--Like,in,between
+
+select * from stud
+where age between 23 and 25;  ---23 and 25 inclusive
+
+select * from stud
+where age in (20,23,25);
+
+select * from stud
+where name like 'G%'; --displays names that start with G
+
+select * from stud  
+where name between 'A' and 'G';
+
+select * from stud
+where age between 25 and 20;  --does'nt work this way
+
+select * from stud
+where name like '%a%';
+--google about careless
+
+--calculated table --important use in DS
+create table calculate
+(low int,
+high int,
+myavg as (low+high)/2   --we can have a column with formula
+);
+
+insert into calculate
+values 
+( 10 , 20 );
+
+select * from calculate;
+
+select * into test from calculate;
+
+insert into test
+values
+(10,20,50);
+
+select * from test
+
