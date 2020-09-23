@@ -417,7 +417,7 @@ go
 select ltrim('   Goutham   ') as name_ltrim
 go
 
-select ltrim('   Goutham   ') as name_rtrim
+select rtrim('   Goutham   ') as name_rtrim
 go
 
 --to verify above operations
