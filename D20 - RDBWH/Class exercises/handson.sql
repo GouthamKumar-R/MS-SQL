@@ -161,7 +161,7 @@ select top 5 from stud; --syntax error
 select top 5 Id from stud;
 
 select top (3)* from stud; 
---top 3 records it can give any 3 records
+--top 3 records it can give any 3 records(random)
 
 exec sp_rename "stud.Age", "Age_emp";  --renaming the column 
 
@@ -359,7 +359,7 @@ set @age_inc = 5  --this is new data
 select @age_inc as Updated_age,* from stud;
 
 declare @b varchar(100)
-set @b = 'Goutham will solve this'
+set @b = 'C:\Users\Goutham-ROG\Documents\1-Codes\Python - codes\goutham.sql'
 select replace(@b,'goutham','flexy') as "repalce value", @b as original_string;
 
 /* assignment
@@ -376,13 +376,182 @@ select isnull(Gender, 'M'),name from stud; --now null is updated
 
 ----------------------
 /*Assignmnet*/
---1st method
-Declare @path varchar(1000), @find varchar(1000), @index int
-set @path = 'C:\Users\Goutham-ROG\Documents\DS studies\College\1st sem\RDBMS and Data Warehousing(RDWH- 2.0)\T_SQL Joins.pdf' --user i/p here
-set @find = @path
-set @index = (charindex('\',reverse(@find))) --this gives the first position of '\'--to be specific the length of the filename
-select reverse(substring(reverse(@find),1,@index-1))
+--1st method -only fns class taught in class 
+Declare @path varchar(MAX), @find varchar(MAX), @len_file int, @len_ext int
+set @path = 'C:\Users\Goutham-ROG\Documents\DS studies\College\1st sem\RDBMS and Data Warehousing(RDWH- 2.0)\T_SQL Joins.pdf     ' --user i/p here
+set @find = @path --copy of filepath
+-set @len_file = ltrim(charindex('\',reverse(@find))) --this gives the first position of '\'--to be specific the length of the filename
+--set @len_file = (charindex('\\',reverse(@find)) --use this if user specifies filepath with \\ and hash out above line
+set @len_ext = ltrim(charindex('.',reverse(@find)))--this gives the length of extension
+select reverse(substring(reverse(@find),1,@len_file-1)) as "File name", reverse(substring(reverse(@find),1,@len_ext-1)) as Extension
 
+--2nd method - using right
+Declare @path2 varchar(MAX), @find2 varchar(MAX), @len_file2 int, @len_ext2 int
+set @path2 = 'C:\Users\Goutham-ROG\Documents\DS studies\College\1st sem\RDBMS and Data Warehousing(RDWH- 2.0)\T_SQL Joins.pdf' --user i/p
+set @find2 = @path2 --copy of filepath
+set @len_file2 = charindex('\',reverse(@find2))
+set @len_ext2 = ltrim(charindex('.',reverse(@find2)))
+select right(@find2,@len_file2-1) as "File name", right(@find2,@len_ext2-1) as Extension
 
+--3rd method- Filename without ext
+Declare @path3 varchar(MAX), @find3 varchar(MAX), @len_file3 int, @len_ext3 int, @pos int
+set @path3 = 'C:\Users\Goutham-ROG\Documents\DS studies\College\1st sem\RDBMS and Data Warehousing(RDWH- 2.0)\T_SQL Joins.pdf' --user i/p
+set @find3 = @path3 --copy of filepath
+set @len_file3 = ltrim(charindex('\',reverse(@find3)))
+set @len_ext3 = ltrim(charindex('.',reverse(@find3)))
+--set @pos = (@find3,@len_file3-1)-@len_ext3)
+select left(right(@find3,@len_file3-1),(@len_file3-@len_ext3)-1) as "File name without Ext", right(@find3,@len_ext3-1) as Extension
 
+----------------------------------------------
+/* 8th oct- 2020*/ --groupby
+
+select * from stud;
+
+select max(age), avg(age) from stud;
+
+select max(age), avg(age), Name from stud;--now the prblm will arise since, there is no agg for name or group by
+-- solution--> use grp by or another agg. for name 
+
+--group by
+select max(age), avg(age), Name from stud group by name;
+
+--another agg
+select max(age), avg(age), max(Name) from stud;
+
+select Location,count(location) as "Count of ppl" 
+from stud 
+group by location; 
+
+select distinct(Location) from stud; --distinct -> used to remove duplicates
+
+select location from stud group by location; --this groups but doesn't remove the value, it aggregates
+
+--generic question
+select top(1) avg(salary), age 
+from emp
+group by age 
+order by salary desc;
+
+--give location for oldest student frm and his name shld have letter s 
+
+select location, name, age
+from stud
+where age = (select max(age) from stud) --and name like '%s';
+
+--or
+--this will mostly don't work coz it is checking max salary and name in same condition adn returns
+select location, name, age
+from stud
+where age = (select max(age) from stud--where name like '%s');
+
+--generic solution
+--give dept id, where oldest employee works and his name shld have letter s
+
+select dept_id from emp
+where age = (select max(age) from emp) and name like '%s'
+
+----------------------------------------------------------------------------------------------------------
+/*13 oct 2020*/
+--Joins
+
+create table employee
+( id int identity(1,1),
+  name varchar(50),
+  age smallint,
+  salary bigint,
+  deptid int
+  );
+ GO
  
+create table deptid
+( id int ,
+  name varchar(50)
+  );
+  Go
+
+insert into employee
+(name, age, salary,deptid)
+values
+('Ann', 21,1000,1),
+('Muhamad',22,1000,2),
+('Lavanaya',23,2000,1),
+('Basith',21,2000,3),
+('Sruthi',22,3000,4),
+('Anchal',21,2000,3);
+
+insert into deptid
+values
+(1,'HR'),(2,'IT'),(4,'Admin'),(5,'Finance');
+
+select * from employee;
+select * from deptid;
+
+--inner join
+select *
+from employee
+inner join deptid
+on employee.deptid = deptid.id;
+
+select employee.id, employee.name, employee.deptid, deptid.name
+from employee
+inner join deptid
+on employee.deptid = deptid.id;
+
+--in ssms inner join and join are same here
+
+select employee.id, employee.name, employee.deptid, deptid.name
+from employee
+join deptid
+on employee.deptid = deptid.id;
+--(dont use this-- its deprecated)in later versions we need right full keyword
+
+--left join --all entries from left tables and matching values form right table, unmatched values will be null
+select employee.id, employee.name, employee.deptid, deptid.name
+from employee
+left join deptid
+on employee.deptid = deptid.id;
+--both are same/ left and left outer join
+select employee.id, employee.name, employee.deptid, deptid.name
+from employee
+left outer join deptid
+on employee.deptid = deptid.id;
+
+-- right join
+select employee.id, employee.name, employee.deptid,deptid.id, deptid.name
+from employee
+right join deptid
+on employee.deptid = deptid.id;
+
+--full join--all the records are retrieved 
+select employee.id, employee.name, employee.deptid, deptid.name
+from employee
+full join deptid
+on employee.deptid = deptid.id;
+--this doesnt work in mysql
+
+--cross join, u dont need to specify join condition/ gives cartesian product
+select *
+from employee
+cross join deptid
+--not used in industry
+--this is called full join in mysql
+
+--natural joins doesn't work here
+--it doesn't need join condition, it joins only if both column id matches (same column names)
+
+/**15-Oct */
+
+--assignment 3 discussion.
+
+--self join
+
+-- three table joins --refer pdf
+
+
+
+
+
+
+
+
+
